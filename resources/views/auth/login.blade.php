@@ -1,8 +1,17 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@extends('layouts.app')
 
-    <form method="POST" action="{{ route('login') }}">
+@section('content')
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-4 text-primary">Login</h3>
+
+                @if(session('status'))
+                    <div class="alert alert-success">{{ session('status') }}</div>
+                @endif
+
+               <form method="POST" action="{{ route('login') }}">
         @csrf
 
         <!-- Email Address -->
@@ -44,4 +53,8 @@
             </x-primary-button>
         </div>
     </form>
-</x-guest-layout>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
