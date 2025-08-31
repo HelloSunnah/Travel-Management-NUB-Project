@@ -56,17 +56,11 @@
             <span class="caret"></span>
           </a>
           <div class="collapse" id="travel-packages">
-            <ul class="nav nav-collapse">
-              <li>
-                <a href="packages/list.html">
-                  <span class="sub-item">Package List</span>
-                </a>
-              </li>
-              <li>
-                <a href="packages/add.html">
-                  <span class="sub-item">Add New Package</span>
-                </a>
-              </li>
+             <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ route('packages.index') }}">Packages</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('hotels.index') }}">Hotels</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('foods.index') }}">Foods</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('transports.index') }}">Transports</a></li>
             </ul>
           </div>
         </li>
