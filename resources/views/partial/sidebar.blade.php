@@ -8,8 +8,8 @@
           src="assets/img/logo.png"
           alt="navbar brand"
           class="navbar-brand"
-          height="100"
-          width="100"
+          height="80"
+          width="90"
         />
       </a>
       <div class="nav-toggle">
