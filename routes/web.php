@@ -1,20 +1,41 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PackagesController;
+use App\Http\Controllers\HotelsController;
+use App\Http\Controllers\HotelRoomsController;
+use App\Http\Controllers\FoodsController;
+use App\Http\Controllers\PackageFoodsController;
+use App\Http\Controllers\TransportsController;
+use App\Http\Controllers\PackageTransportController;
+use App\Http\Controllers\OtherCostController;
+use App\Http\Controllers\PackageHotelController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('AdminPanel.dashboard');
 })->middleware(['auth', 'verified'])->name('master');
 
 Route::middleware('auth')->group(function () {
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('packages', PackagesController::class);
+    Route::resource('hotels', HotelsController::class);
+    Route::resource('hotel-rooms', HotelRoomsController::class);
+    Route::resource('package-hotels', PackageHotelController::class);
+    Route::resource('foods', FoodsController::class);
+    Route::resource('package-foods', PackageFoodsController::class);
+    Route::resource('transports', TransportsController::class);
+    Route::resource('package-transports', PackageTransportController::class);
+    Route::resource('other-costs', OtherCostController::class);
+
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
