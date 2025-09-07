@@ -59,6 +59,7 @@
              <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link" href="{{ route('packages.index') }}">Packages</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('hotels.index') }}">Hotels</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('hotel-rooms.index') }}">Hotels Room</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('foods.index') }}">Foods</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('transports.index') }}">Transports</a></li>
             </ul>
