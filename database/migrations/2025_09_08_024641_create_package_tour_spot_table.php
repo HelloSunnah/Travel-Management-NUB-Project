@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
- Schema::create('foods', function (Blueprint $table) {
+    Schema::create('package_tour_spot', function (Blueprint $table) {
     $table->id();
-$table->foreignId('destination_id')->constrained()->cascadeOnDelete(); // Link food to destination
-
-    $table->string('name'); // e.g., "Morning Menu"
-    $table->text('menu_items'); // e.g., "Rice + Chicken + Salad"
-    $table->decimal('price', 10, 2); // e.g., 200 TK
+    $table->foreignId('package_id')->constrained()->cascadeOnDelete();
+    $table->foreignId('tour_spot_id')->constrained()->cascadeOnDelete();
     $table->timestamps();
 });
 
@@ -28,6 +25,6 @@ $table->foreignId('destination_id')->constrained()->cascadeOnDelete(); // Link f
      */
     public function down(): void
     {
-        Schema::dropIfExists('foods');
+        Schema::dropIfExists('package_tour_spot');
     }
 };
