@@ -50,7 +50,10 @@ class DestinationsController extends Controller
 
         return redirect()->route('destinations.index')->with('success', 'Destination updated successfully!');
     }
-
+public function foods(destinations $destination)
+{
+    return response()->json($destination->foods); // assuming relation 'foods' exists
+}
     // Delete destination
     public function destroy(destinations $destination)
     {

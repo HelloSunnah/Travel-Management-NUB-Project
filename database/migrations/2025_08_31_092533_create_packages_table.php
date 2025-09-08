@@ -14,14 +14,16 @@ return new class extends Migration
         Schema::create('packages', function (Blueprint $table) {
     $table->id();
     $table->string('title');
-    $table->foreignId('destination_id')->constrained()->onDelete('cascade');
-    $table->foreignId('hotel_id')->constrained()->onDelete('cascade');
+    $table->foreignId('destination_id')->constrained('destinations')->onDelete('cascade');
+    $table->foreignId('hotel_id')->constrained('hotels')->onDelete('cascade');
     $table->foreignId('room_id')->constrained('hotel_rooms')->onDelete('cascade');
-    $table->integer('nights')->default(1);
-    $table->decimal('hotel_total_price',10,2)->default(0);
+    $table->integer('nights');
+    $table->decimal('hotel_total_price', 10, 2)->default(0);
+    $table->decimal('base_price', 10, 2)->default(0);
+    $table->decimal('extra_cost', 10, 2)->default(0);
+    $table->decimal('transport_cost', 10, 2)->default(0);
     $table->date('start_date');
     $table->date('end_date');
-    $table->decimal('base_price',10,2)->default(0);
     $table->timestamps();
         });
     }
