@@ -10,7 +10,7 @@ class FoodsController extends Controller
 {
     public function byDestination($destinationId)
 {
-    $foods = \App\Models\Foods::where('destination_id', $destinationId)->get();
+    $foods = Foods::where('destination_id', $destinationId)->get();
     return response()->json($foods);
 }
 
