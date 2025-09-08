@@ -2,89 +2,146 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PackageFoods;
+use App\Models\destinations;
+use App\Models\Foods;
+use App\Models\HotelRooms;
+use App\Models\Hotels;
+use App\Models\packageFoods;
 use App\Models\Packages;
 use Illuminate\Http\Request;
 
 class PackagesController extends Controller
 {
-     public function index(Request $request)
+    public function index()
     {
-        $packages = Packages::with('foods')->latest()->get(); // eager load foods
-        $editPackage = null;
+    $destinations = Destinations::all();
+    $hotels = Hotels::with('rooms')->get();
+    $packages = Packages::with('destination','hotel','room','foods.food')->get();
 
-        if ($request->has('edit')) {
-            $editPackage = Packages::with('foods')->find($request->edit);
-        }
+    // For initial load, foods for first destination (optional)
+    $foods = $destinations->first() ? $destinations->first()->foods : collect();
 
-        return view('AdminPanel.Package.Index', compact('packages', 'editPackage'));
+    return view('AdminPanel.Package.Index', compact('destinations','hotels','packages','foods'));
+
     }
 
-    // Store new package
+    public function create()
+    {
+        $destinations = destinations::all();
+        $hotels = Hotels::with('rooms')->get();
+        $foods = Foods::all();
+        return view('AdminPanel.Package.Index', compact('destinations', 'hotels', 'foods'));
+    }
+
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name'          => 'required|string|max:255',
-            'description'   => 'nullable|string',
-            'days'          => 'required|integer|min:1',
-            'nights'        => 'required|integer|min:1',
-            'benefit_type'  => 'required|in:fixed,percent',
-            'benefit_value' => 'required|numeric|min:0',
-            'status'        => 'required|in:active,inactive',
+        // Validate
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'destination_id' => 'required|exists:destinations,id',
+            'hotel_id' => 'required|exists:hotels,id',
+            'room_id' => 'required|exists:hotel_rooms,id',
+            'nights' => 'required|integer|min:1',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
-        $package = Packages::create($data);
+        // Calculate hotel total price
+        $room = HotelRooms::findOrFail($request->room_id);
+        $hotel_total_price = $room->price_per_night * $request->nights;
 
-        // Save related foods (optional input: foods[] = [id, qty, total])
+        $package = Packages::create([
+            'title' => $request->title,
+            'destination_id' => $request->destination_id,
+            'hotel_id' => $request->hotel_id,
+            'room_id' => $request->room_id,
+            'nights' => $request->nights,
+            'hotel_total_price' => $hotel_total_price,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'base_price' => $request->base_price ?? 0,
+        ]);
         if ($request->has('foods')) {
-            foreach ($request->foods as $food) {
-                PackageFoods::create([
-                    'package_id'   => $package->id,
-                    'food_id'      => $food['id'],
-                    'quantity'     => $food['quantity'] ?? 1,
-                    'total_price'  => $food['total_price'] ?? 0,
-                ]);
+            foreach ($request->foods as $foodData) {
+                if (isset($foodData['food_id'])) {
+                    $food = Foods::find($foodData['food_id']);
+                    $quantity = $foodData['quantity'] ?? 1;
+                    $package->foods()->create([
+                        'food_id' => $food->id,
+                        'quantity' => $quantity,
+                        'total_price' => $food->price * $quantity,
+                    ]);
+                }
             }
         }
 
         return redirect()->route('packages.index')->with('success', 'Package created successfully!');
     }
 
-    // Update package
+    public function edit(Packages $package)
+    {
+        $destinations = destinations::all();
+        $hotels = Hotels::with('rooms')->get();
+        $foods = Foods::all();
+        $packages = Packages::with('destination', 'hotel', 'room', 'foods.food')->get();
+
+        // Ensure hotel with rooms is loaded for the selected package
+        $package->load('hotel.rooms', 'room', 'foods.food');
+
+        return view('AdminPanel.Package.Index', compact('package', 'destinations', 'hotels', 'foods', 'packages'));
+    }
+
     public function update(Request $request, Packages $package)
     {
-        $data = $request->validate([
-            'name'          => 'required|string|max:255',
-            'description'   => 'nullable|string',
-            'days'          => 'required|integer|min:1',
-            'nights'        => 'required|integer|min:1',
-            'benefit_type'  => 'required|in:fixed,percent',
-            'benefit_value' => 'required|numeric|min:0',
-            'status'        => 'required|in:active,inactive',
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'destination_id' => 'required|exists:destinations,id',
+            'hotel_id' => 'required|exists:hotels,id',
+            'room_id' => 'required|exists:hotel_rooms,id',
+            'nights' => 'required|integer|min:1',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
-        $package->update($data);
+        $room = HotelRooms::findOrFail($request->room_id);
+        $hotel_total_price = $room->price_per_night * $request->nights;
 
-        // Sync foods
+        $package->update([
+            'title' => $request->title,
+            'destination_id' => $request->destination_id,
+            'hotel_id' => $request->hotel_id,
+            'room_id' => $request->room_id,
+            'nights' => $request->nights,
+            'hotel_total_price' => $hotel_total_price,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'base_price' => $request->base_price ?? 0,
+        ]);
+
+        // Remove old foods
+        $package->foods()->delete();
+
         if ($request->has('foods')) {
-            $package->foods()->delete(); // clear old
-            foreach ($request->foods as $food) {
-                PackageFoods::create([
-                    'package_id'   => $package->id,
-                    'food_id'      => $food['id'],
-                    'quantity'     => $food['quantity'] ?? 1,
-                    'total_price'  => $food['total_price'] ?? 0,
-                ]);
+            foreach ($request->foods as $foodData) {
+                if (isset($foodData['food_id'])) {
+                    $food = Foods::find($foodData['food_id']);
+                    $quantity = $foodData['quantity'] ?? 1;
+                    $package->foods()->create([
+                        'food_id' => $food->id,
+                        'quantity' => $quantity,
+                        'total_price' => $food->price * $quantity,
+                    ]);
+                }
             }
         }
 
         return redirect()->route('packages.index')->with('success', 'Package updated successfully!');
     }
 
-    // Delete package
     public function destroy(Packages $package)
     {
-        $package->delete(); // cascade deletes foods
+        $package->foods()->delete();
+        $package->delete();
         return redirect()->route('packages.index')->with('success', 'Package deleted successfully!');
     }
 }

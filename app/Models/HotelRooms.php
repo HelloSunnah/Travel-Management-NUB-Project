@@ -8,8 +8,9 @@ use App\Models\Hotels;
 class HotelRooms extends Model
 {
     protected $guarded = []; // allow mass assignment
+    // Optional: relation to hotel
     public function hotel()
     {
-        return $this->belongsTo(Hotels::class);
+        return $this->belongsTo(Hotels::class, 'hotel_id', 'id');
     }
 }

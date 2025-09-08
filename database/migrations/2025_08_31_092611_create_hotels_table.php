@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->tinyInteger('rating')->nullable();
             $table->text('description')->nullable();
+            $table->decimal('price_per_night')->nullable();
+
             $table->timestamps();
         });
     }

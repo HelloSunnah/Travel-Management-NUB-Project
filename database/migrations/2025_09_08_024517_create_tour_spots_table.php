@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
- Schema::create('foods', function (Blueprint $table) {
+    Schema::create('tour_spots', function (Blueprint $table) {
     $table->id();
-$table->foreignId('destination_id')->constrained()->cascadeOnDelete(); // Link food to destination
-
-    $table->string('name'); // e.g., "Morning Menu"
-    $table->text('menu_items'); // e.g., "Rice + Chicken + Salad"
-    $table->decimal('price', 10, 2); // e.g., 200 TK
+    $table->string('name');       // Example: Cox's Bazar, Sylhet
+    $table->string('location')->nullable(); // Optional: Division/District
+    $table->decimal('entry_fee', 10, 2)->default(0); // optional ticket/guide cost
     $table->timestamps();
 });
 
@@ -28,6 +26,6 @@ $table->foreignId('destination_id')->constrained()->cascadeOnDelete(); // Link f
      */
     public function down(): void
     {
-        Schema::dropIfExists('foods');
+        Schema::dropIfExists('tour_spots');
     }
 };

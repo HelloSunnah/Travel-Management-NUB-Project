@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Foods;
-use App\Models\PackageFoods;
+use App\Models\packageFoods;
 use App\Models\Packages;
 use Illuminate\Http\Request;
 
-class PackageFoodsController extends Controller
+class packageFoodsController extends Controller
 {
  public function store(Request $request, Packages $package)
     {
@@ -26,15 +26,15 @@ class PackageFoodsController extends Controller
         return back()->with('success', 'Food added to package successfully!');
     }
 
-    public function update(Request $request, Packages $package, PackageFoods $packageFood)
+    public function update(Request $request, Packages $package, packageFoods $packageFoods)
     {
         $request->validate([
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $food = $packageFood->food;
+        $food = $packageFoods->food;
 
-        $packageFood->update([
+        $packageFoods->update([
             'quantity'    => $request->quantity,
             'total_price' => $food->price_per_meal * $request->quantity,
         ]);
@@ -42,9 +42,9 @@ class PackageFoodsController extends Controller
         return back()->with('success', 'Package food updated!');
     }
 
-    public function destroy(Packages $package, PackageFoods $packageFood)
+    public function destroy(Packages $package, packageFoods $packageFoods)
     {
-        $packageFood->delete();
+        $packageFoods->delete();
         return back()->with('success', 'Food removed from package!');
     }
 }

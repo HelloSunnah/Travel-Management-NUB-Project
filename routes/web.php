@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\DestinationsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PackagesController;
 use App\Http\Controllers\HotelsController;
 use App\Http\Controllers\HotelRoomsController;
 use App\Http\Controllers\FoodsController;
-use App\Http\Controllers\PackageFoodsController;
+use App\Http\Controllers\packageFoodsController;
 use App\Http\Controllers\TransportsController;
 use App\Http\Controllers\PackageTransportController;
 use App\Http\Controllers\OtherCostController;
@@ -27,15 +28,22 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('packages', PackagesController::class);
+    Route::resource('destinations', DestinationsController::class);
     Route::resource('hotels', HotelsController::class);
     Route::resource('hotel-rooms', HotelRoomsController::class);
     Route::resource('package-hotels', PackageHotelController::class);
     Route::resource('foods', FoodsController::class);
-    Route::resource('package-foods', PackageFoodsController::class);
+    Route::resource('package-foods', packageFoodsController::class);
     Route::resource('transports', TransportsController::class);
     Route::resource('package-transports', PackageTransportController::class);
     Route::resource('other-costs', OtherCostController::class);
+Route::get('/hotels/{hotel}/rooms', function(App\Models\Hotels $hotel){
+    return response()->json($hotel->rooms);
 
+Route::get('/destinations/{destination}/foods', [FoodsController::class, 'byDestination']);
+
+
+});
 });
 
 require __DIR__ . '/auth.php';

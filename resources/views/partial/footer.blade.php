@@ -22,7 +22,7 @@
             </div>
             <div>
               Distributed by
-              <a target="_blank" href="https://themewagon.com/">ThemeWagon</a>.
+              <a target="_blank" href="https://Jatraa.com/">Jatraa</a>.
             </div>
           </div>
         </footer>
