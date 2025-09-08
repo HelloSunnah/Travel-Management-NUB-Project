@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
- Schema::create('foods', function (Blueprint $table) {
+Schema::create('foods', function (Blueprint $table) {
     $table->id();
-$table->foreignId('destination_id')->constrained()->cascadeOnDelete(); // Link food to destination
-
-    $table->string('name'); // e.g., "Morning Menu"
-    $table->text('menu_items'); // e.g., "Rice + Chicken + Salad"
-    $table->decimal('price', 10, 2); // e.g., 200 TK
+    $table->string('name');
+    $table->string('menu_items')->nullable();
+    $table->decimal('price', 10, 2);
+    $table->foreignId('destination_id')->constrained('destinations')->onDelete('cascade');
     $table->timestamps();
 });
 

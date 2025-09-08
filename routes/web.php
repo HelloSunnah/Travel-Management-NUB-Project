@@ -37,13 +37,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('transports', TransportsController::class);
     Route::resource('package-transports', PackageTransportController::class);
     Route::resource('other-costs', OtherCostController::class);
-Route::get('/hotels/{hotel}/rooms', function(App\Models\Hotels $hotel){
-    return response()->json($hotel->rooms);
-
-Route::get('/destinations/{destination}/foods', [FoodsController::class, 'byDestination']);
+Route::get('destinations/{destination}/foods', [PackagesController::class,'foodsByDestination']);
+Route::get('hotels/{hotel}/rooms', [PackagesController::class,'roomsByHotel']);
 
 
-});
 });
 
 require __DIR__ . '/auth.php';

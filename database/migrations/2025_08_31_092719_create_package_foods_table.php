@@ -10,15 +10,15 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {Schema::create('package_foods', function (Blueprint $table) {
+    {
+Schema::create('package_foods', function (Blueprint $table) {
     $table->id();
-    $table->foreignId('package_id')->constrained()->onDelete('cascade');
-    $table->foreignId('food_id')->constrained()->onDelete('cascade');
-    $table->integer('quantity')->default(1); // number of times this menu is included
-    $table->decimal('total_price',10,2)->default(0); // price * quantity
+    $table->foreignId('package_id')->constrained('packages')->onDelete('cascade');
+    $table->foreignId('food_id')->constrained('foods')->onDelete('cascade');
+    $table->integer('quantity')->default(1);
+    $table->decimal('total_price', 10, 2);
     $table->timestamps();
 });
-
 
     }
 
