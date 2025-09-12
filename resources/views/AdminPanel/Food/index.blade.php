@@ -7,27 +7,26 @@
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-
-    {{-- Add Food Button --}}
-    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#foodModal"
+        <div class="container mt-4">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"> Manage Food Menus</h4>
+                  <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#foodModal"
             onclick="openFoodModal()">+ Add Food Menu</button>
-
-    {{-- Foods Table --}}
-    <div class="card p-4">
-        <h4 class="mb-3">All Food Menus</h4>
-        <div class="table-responsive">
-            <table class="table table-bordered align-middle">
-                <thead class="table-light">
-                    <tr>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead class="table-dark">
+                              <tr>
                         <th>Name</th>
                         <th>Destination</th>
                         <th>Menu Items</th>
                         <th>Price (TK)</th>
                         <th>Actions</th>
                     </tr>
-                </thead>
-                <tbody>
-                @foreach($foods as $food)
+                        </thead>
+                        <tbody>
+                                 @foreach($foods as $food)
                     <tr>
                         <td>{{ $food->name }}</td>
                         <td>{{ $food->destination->name ?? 'N/A' }}</td>
@@ -48,10 +47,27 @@
                         </td>
                     </tr>
                 @endforeach
-                </tbody>
-            </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </div>
 
 {{-- Bootstrap Modal --}}

@@ -37,9 +37,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('transports', TransportsController::class);
     Route::resource('package-transports', PackageTransportController::class);
     Route::resource('other-costs', OtherCostController::class);
-Route::get('destinations/{destination}/foods', [PackagesController::class,'foodsByDestination']);
-Route::get('hotels/{hotel}/rooms', [PackagesController::class,'roomsByHotel']);
-
+// Ajax
+Route::get('/destinations/{id}/hotels', [PackagesController::class, 'getHotels']);
+Route::get('/hotels/{id}/rooms', [PackagesController::class, 'getRooms']);
+Route::get('/destinations/{id}/foods', [PackagesController::class, 'getFoods']);
 
 });
 
