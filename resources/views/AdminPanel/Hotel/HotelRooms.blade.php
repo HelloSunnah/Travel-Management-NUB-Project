@@ -58,13 +58,18 @@
         </div>
     </div>
 
-    <!-- Add button -->
-    <button class="btn btn-primary mb-3" onclick="openCreateModal()">+ Add Room</button>
 
-    <!-- Table -->
-    <table class="table table-bordered">
-        <thead>
-            <tr>
+        <div class="container mt-4">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Hotel Management</h4>
+                <button class="btn btn-success mb-3" onclick="openCreateModal()">+ Add Room</button>
+
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead class="table-dark">
+                  <tr>
                 <th>Hotel</th>
                 <th>Type</th>
                 <th>Capacity</th>
@@ -72,9 +77,9 @@
                 <th>Description</th>
                 <th width="180">Actions</th>
             </tr>
-        </thead>
-        <tbody>
-            @foreach($rooms as $room)
+                        </thead>
+                        <tbody>
+                        @foreach($rooms as $room)
             <tr>
                 <td>{{ $room->hotel->name }}</td>
                 <td>{{ $room->room_type }}</td>
@@ -90,8 +95,12 @@
                 </td>
             </tr>
             @endforeach
-        </tbody>
-    </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
 </div>
 
 </div>

@@ -11,16 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hotels', function (Blueprint $table) {
-           $table->id();
-            $table->string('name');
-            $table->string('location')->nullable();
-            $table->tinyInteger('rating')->nullable();
-            $table->text('description')->nullable();
-            $table->decimal('price_per_night')->nullable();
+  Schema::create('hotels', function (Blueprint $table) {
+    $table->id();
+    $table->string('name'); 
+    $table->foreignId('destination_id')
+          ->nullable()
+          ->constrained('destinations')
+          ->nullOnDelete();
+    $table->tinyInteger('rating')->nullable();
+    $table->text('description')->nullable();
+    $table->decimal('price_per_night', 10, 2)->nullable();
+    $table->timestamps();
+});
 
-            $table->timestamps();
-        });
     }
 
     /**
