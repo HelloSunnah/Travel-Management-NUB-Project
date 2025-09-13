@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\DestinationsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
@@ -39,11 +40,19 @@ Route::middleware('auth')->group(function () {
     Route::resource('transports', TransportsController::class);
     Route::resource('package-transports', PackageTransportController::class);
     Route::resource('other-costs', OtherCostController::class);
+        Route::get('/bookings', [BookingsController::class, 'adminIndex'])->name('admin.bookings.index');
+    Route::post('/bookings/{booking}/approve', [BookingsController::class, 'approve'])->name('admin.bookings.approve');
+    Route::post('/bookings/{booking}/cancel', [BookingsController::class, 'cancel'])->name('admin.bookings.cancel');
+
 // Ajax
+
 Route::get('/destinations/{id}/hotels', [PackagesController::class, 'getHotels']);
 Route::get('/hotels/{id}/rooms', [PackagesController::class, 'getRooms']);
 Route::get('/destinations/{id}/foods', [PackagesController::class, 'getFoods']);
 
+
 });
+Route::get('/booking/{package}', [BookingsController::class, 'show'])->name('booking.show');
+Route::post('/bookings', [BookingsController::class, 'store'])->name('bookings.store');
 
 require __DIR__ . '/auth.php';

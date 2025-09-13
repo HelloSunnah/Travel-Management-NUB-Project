@@ -80,8 +80,8 @@
                     <div class="collapse" id="bookings">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="bookings/pending.html">
-                                    <span class="sub-item">Pending Bookings</span>
+                                <a href="{{ route('admin.bookings.index') }}">
+                                    <span class="sub-item">Bookings List</span>
                                 </a>
                             </li>
                             <li>

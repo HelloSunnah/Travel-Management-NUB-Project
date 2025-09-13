@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class FrontendController extends Controller
 {
     public function index(){
-        $packages = Packages::with('destination')->get();
+        $packages = Packages::with('destination', 'hotel', 'room')->paginate(9);
 
         return view('welcome',compact('packages'));
     }

@@ -760,26 +760,119 @@
                     domestic spots.</p>
             </div>
             <div class="destinations-grid">
-                @foreach ($packages as $package)
-                    <div class="destination-card">
-                        <div class="destination-img">
-                            <img src="{{ asset('storage/' . $package->image) }}"
-                                alt="Bali">
-                        </div>
-                        <div class="destination-info">
-                            <h3>{{ $package->title }}</h3>
-                            <p>{{ $package->title }}</p>
-                            <div class="destination-meta">
-                                <span><i class="fas fa-plane"></i> {{ $package->destination->name ?? 'N/A' }}</span>
-                                <span class="destination-price">{{ $package->hotel_total_price }}</span>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
+        @foreach ($packages as $package)
+    <div class="card">
+        <img src="{{ asset('storage/' . $package->image) }}" class="card-img-top" alt="{{ $package->title }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ $package->title }}</h5>
+            <p>{{ Str::limit($package->description, 80) }}</p>
+            <p><strong>Price:</strong> {{ $package->hotel_total_price }}</p>
+            <a href="{{ route('booking.show', $package->id) }}" class="btn btn-primary">Book Now</a>
+        </div>
+    </div>
+@endforeach
             </div>
+            
         </div>
     </section>
 
+
+
+       <!-- Destinations Section -->
+    {{-- <section class="destinations" id="destinations">
+        <div class="container">
+            <div class="section-title">
+                <h2>Popular Destinations</h2>
+                <p>Explore our most sought-after destinations, from exotic international locales to breathtaking domestic spots.</p>
+            </div>
+
+            <div class="destinations-grid">
+                <div class="destination-card">
+                    <div class="destination-img">
+                        <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Bali">
+                    </div>
+                    <div class="destination-info">
+                        <h3>Bali, Indonesia</h3>
+                        <p>Experience the tropical paradise with stunning beaches, vibrant culture, and lush landscapes.</p>
+                        <div class="destination-meta">
+                            <span><i class="fas fa-plane"></i> Flight Included</span>
+                            <span class="destination-price">$1,299</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="destination-card">
+                    <div class="destination-img">
+                        <img src="https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1530&q=80" alt="Paris">
+                    </div>
+                    <div class="destination-info">
+                        <h3>Paris, France</h3>
+                        <p>The city of love and lights, famous for its art, fashion, gastronomy and culture.</p>
+                        <div class="destination-meta">
+                            <span><i class="fas fa-plane"></i> Flight Included</span>
+                            <span class="destination-price">$1,899</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="destination-card">
+                    <div class="destination-img">
+                        <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Tokyo">
+                    </div>
+                    <div class="destination-info">
+                        <h3>Tokyo, Japan</h3>
+                        <p>A dynamic metropolis where traditional culture meets cutting-edge technology.</p>
+                        <div class="destination-meta">
+                            <span><i class="fas fa-plane"></i> Flight Included</span>
+                            <span class="destination-price">$2,199</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="destination-card">
+                    <div class="destination-img">
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="New York">
+                    </div>
+                    <div class="destination-info">
+                        <h3>New York, USA</h3>
+                        <p>The city that never sleeps, offering endless entertainment, culture, and iconic landmarks.</p>
+                        <div class="destination-meta">
+                            <span><i class="fas fa-plane"></i> Flight Included</span>
+                            <span class="destination-price">$1,599</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="destination-card">
+                    <div class="destination-img">
+                        <img src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80" alt="Cape Town">
+                    </div>
+                    <div class="destination-info">
+                        <h3>Cape Town, South Africa</h3>
+                        <p>Breathtaking landscapes, wildlife, and a rich cultural heritage await in this coastal city.</p>
+                        <div class="destination-meta">
+                            <span><i class="fas fa-plane"></i> Flight Included</span>
+                            <span class="destination-price">$1,799</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="destination-card">
+                    <div class="destination-img">
+                        <img src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Sundarbans">
+                    </div>
+                    <div class="destination-info">
+                        <h3>Sundarbans, Bangladesh</h3>
+                        <p>Explore the world's largest mangrove forest and its unique wildlife, including the Royal Bengal Tiger.</p>
+                        <div class="destination-meta">
+                            <span><i class="fas fa-bus"></i> Transport Included</span>
+                            <span class="destination-price">$299</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> --}}
     <!-- Testimonials Section -->
     <section class="testimonials">
         <div class="container">

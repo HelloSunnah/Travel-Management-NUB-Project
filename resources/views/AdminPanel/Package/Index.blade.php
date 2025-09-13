@@ -23,8 +23,6 @@
                 <input type="text" id="title" name="title" class="form-control rounded-3"
                        value="{{ old('title', $package->title ?? '') }}" required>
             </div>
-
-
                 <div class="col-md-3">
                     <label for="description" class="form-label fw-bold">Description</label>
                     <input type="text" name="description" id="description" class="form-control rounded-3"
