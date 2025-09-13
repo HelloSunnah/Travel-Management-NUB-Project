@@ -9,8 +9,6 @@ use App\Models\HotelRooms;
 use App\Models\Packages;
 use App\Models\packageFoods;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\File;
 
 class PackagesController extends Controller
 {
@@ -18,13 +16,16 @@ class PackagesController extends Controller
     public function index()
     {
         $packages = Packages::with(['destination', 'hotel', 'room', 'foods'])->latest()->get();
-        $destinations = destinations::all();
+        $destinations = Destinations::all();
         $hotels = Hotels::all();
+
         return view('AdminPanel.Package.Index', compact('destinations', 'hotels', 'packages'));
     }
+
+    // Store new package
     public function store(Request $request)
     {
-
+        // dd($request);
         $request->validate([
             'title'          => 'required|string|max:255',
             'description'    => 'nullable|string|max:255',
@@ -48,19 +49,21 @@ class PackagesController extends Controller
             }
         }
 
-        $grandTotal = $hotelTotalPrice + ($request->base_price ?? 0) + ($request->extra_cost ?? 0) + ($request->transport_cost ?? 0) + $foodTotal;
+        $grandTotal = $hotelTotalPrice 
+                    + ($request->base_price ?? 0) 
+                    + ($request->extra_cost ?? 0) 
+                    + ($request->transport_cost ?? 0) 
+                    + $foodTotal;
 
-        // Upload the image first if present
         $imageName = null;
         if ($request->hasFile('image')) {
-            $imageName = $request->file('image')->store('images', 'public');
+            $imageName = $request->file('image')->store('uploads/packages', 'public');
         }
 
-        // dd($imageName);
+        // Create package
         $package = Packages::create([
             'title'             => $request->title,
-            'description'             => $request->description,
-
+            'description'       => $request->description,
             'destination_id'    => $request->destination_id,
             'hotel_id'          => $request->hotel_id,
             'room_id'           => $request->room_id,
@@ -73,7 +76,7 @@ class PackagesController extends Controller
             'grand_total'       => $grandTotal,
             'start_date'        => $request->start_date,
             'end_date'          => $request->end_date,
-            'image'             => $imageName, // ✅ store image name in DB
+            'image'             => $imageName,
         ]);
 
         // Save selected foods
@@ -91,14 +94,22 @@ class PackagesController extends Controller
         return redirect()->back()->with('success', 'Package created successfully!');
     }
 
+    // Edit package
+    public function edit(Packages $package)
+    {
+        $destinations = Destinations::all();
+        $hotels = Hotels::all();
+        $rooms = HotelRooms::where('hotel_id', $package->hotel_id)->get();
 
+        return view('AdminPanel.Package.Index', compact('package', 'destinations', 'hotels', 'rooms'));
+    }
 
     // Update package
     public function update(Request $request, Packages $package)
     {
         $request->validate([
             'title'          => 'required|string|max:255',
-            'description'          => 'nullable|string|max:255',
+            'description'    => 'nullable|string|max:255',
             'destination_id' => 'required|exists:destinations,id',
             'hotel_id'       => 'required|exists:hotels,id',
             'room_id'        => 'required|exists:hotel_rooms,id',
@@ -108,36 +119,52 @@ class PackagesController extends Controller
             'image'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // --- Update base fields ---
-        $package->update($request->only([
-            'title',
-            'destination_id',
-            'description',
-            'hotel_id',
-            'room_id',
-            'nights',
-            'extra_cost',
-            'transport_cost',
-            'start_date',
-            'end_date',
-            'base_price',
-        ]));
+        $room = HotelRooms::findOrFail($request->room_id);
+        $hotelTotalPrice = $room->price_per_night * $request->nights;
+        $perHeadPrice = $room->person_capacity > 0 ? $hotelTotalPrice / $room->person_capacity : $hotelTotalPrice;
 
-        // --- Handle image update ---
+        $foodTotal = 0;
+        if ($request->has('foods')) {
+            foreach ($request->foods as $foodData) {
+                $foodTotal += $foodData['total'] ?? 0;
+            }
+        }
+
+        $grandTotal = $hotelTotalPrice 
+                    + ($request->base_price ?? 0) 
+                    + ($request->extra_cost ?? 0) 
+                    + ($request->transport_cost ?? 0) 
+                    + $foodTotal;
+
+        // Update base fields
+        $package->update([
+            'title'             => $request->title,
+            'description'       => $request->description,
+            'destination_id'    => $request->destination_id,
+            'hotel_id'          => $request->hotel_id,
+            'room_id'           => $request->room_id,
+            'nights'            => $request->nights,
+            'hotel_total_price' => $hotelTotalPrice,
+            'per_head_price'    => $perHeadPrice,
+            'base_price'        => $request->base_price ?? 0,
+            'extra_cost'        => $request->extra_cost ?? 0,
+            'transport_cost'    => $request->transport_cost ?? 0,
+            'grand_total'       => $grandTotal,
+            'start_date'        => $request->start_date,
+            'end_date'          => $request->end_date,
+        ]);
+
+        // Update image if uploaded
         if ($request->hasFile('image')) {
-            // delete old image if exists
             if ($package->image && file_exists(public_path('uploads/packages/' . $package->image))) {
                 unlink(public_path('uploads/packages/' . $package->image));
             }
-
-            $filename = time() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/packages'), $filename);
-
-            $package->image = $filename;
+            $imageName = $request->file('image')->store('uploads/packages', 'public');
+            $package->image = $imageName;
             $package->save();
         }
 
-        // --- Refresh foods ---
+        // Refresh foods
         $package->foods()->delete();
         if ($request->has('foods')) {
             foreach ($request->foods as $foodId => $foodData) {
@@ -153,39 +180,35 @@ class PackagesController extends Controller
         return redirect()->back()->with('success', 'Package updated successfully!');
     }
 
-    public function edit(Packages $package)
-    {
-        $destinations = Destinations::all();
-        $hotels = Hotels::all();
-        $rooms = HotelRooms::where('hotel_id', $package->hotel_id)->get();
-
-        return view('AdminPanel.Package.Index', compact('package', 'destinations', 'hotels', 'rooms'));
-    }
-
     // Delete package
     public function destroy(Packages $package)
     {
+        if ($package->image && file_exists(public_path('uploads/packages/' . $package->image))) {
+            unlink(public_path('uploads/packages/' . $package->image));
+        }
+        $package->foods()->delete();
         $package->delete();
+
         return redirect()->back()->with('success', 'Package deleted successfully!');
     }
 
-    // ========= AJAX APIs =========
+    // ========== AJAX APIs ==========
 
-    // Destination → Hotels
+    // Get Hotels by Destination
     public function getHotels($destinationId)
     {
         $hotels = Hotels::where('destination_id', $destinationId)->get();
         return response()->json($hotels);
     }
 
-    // Hotel → Rooms
+    // Get Rooms by Hotel
     public function getRooms($hotelId)
     {
         $rooms = HotelRooms::where('hotel_id', $hotelId)->get();
         return response()->json($rooms);
     }
 
-    // Destination → Foods
+    // Get Foods by Destination
     public function getFoods($destinationId)
     {
         $foods = Foods::where('destination_id', $destinationId)->get();
