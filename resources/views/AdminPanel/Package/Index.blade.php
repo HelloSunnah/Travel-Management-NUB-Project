@@ -24,6 +24,12 @@
                        value="{{ old('title', $package->title ?? '') }}" required>
             </div>
 
+
+                <div class="col-md-3">
+                    <label for="description" class="form-label fw-bold">Description</label>
+                    <input type="text" name="description" id="description" class="form-control rounded-3"
+                           value="{{ old('description', $package->description ?? "") }}" required>
+                </div>
             {{-- Destination & Image --}}
             <div class="row g-4">
                 <div class="col-md-6">
@@ -146,6 +152,7 @@
                             <th>#</th>
                             <th>Image</th>
                             <th>Title</th>
+                            <th>Description</th>
                             <th>Destination</th>
                             <th>Hotel</th>
                             <th>Room</th>
@@ -176,6 +183,7 @@
                                 @endif
                             </td>
                             <td>{{ $p->title }}</td>
+                            <td>{{ $p->description }}</td>
                             <td>{{ $p->destination->name ?? '' }}</td>
                             <td>{{ $p->hotel->name ?? '' }}</td>
                             <td>{{ $p->room->room_type ?? '' }}</td>

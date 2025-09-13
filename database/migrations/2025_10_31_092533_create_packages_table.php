@@ -15,6 +15,9 @@ return new class extends Migration
     $table->id();
     $table->string('title');
     $table->string('image');
+    $table->string('grand_total');
+    $table->string('per_head_price');
+    $table->string('description')->nullable();
     $table->foreignId('destination_id')->constrained('destinations')->onDelete('cascade');
     $table->foreignId('hotel_id')->constrained('hotels')->onDelete('cascade');
     $table->foreignId('room_id')->constrained('hotel_rooms')->onDelete('cascade');
