@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('packages', function (Blueprint $table) {
     $table->id();
     $table->string('title');
+    $table->string('image');
     $table->foreignId('destination_id')->constrained('destinations')->onDelete('cascade');
     $table->foreignId('hotel_id')->constrained('hotels')->onDelete('cascade');
     $table->foreignId('room_id')->constrained('hotel_rooms')->onDelete('cascade');

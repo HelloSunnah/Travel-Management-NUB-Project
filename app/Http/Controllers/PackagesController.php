@@ -9,6 +9,8 @@ use App\Models\HotelRooms;
 use App\Models\Packages;
 use App\Models\packageFoods;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 class PackagesController extends Controller
 {
@@ -19,9 +21,9 @@ public function index() {
     $hotels = Hotels::all();
         return view('AdminPanel.Package.Index', compact('destinations', 'hotels', 'packages'));
 }
-// Store package
 public function store(Request $request)
 {
+
     $request->validate([
         'title'          => 'required|string|max:255',
         'destination_id' => 'required|exists:destinations,id',
@@ -33,11 +35,26 @@ public function store(Request $request)
         'image'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
     ]);
 
-    // --- Calculate hotel total price ---
     $room = HotelRooms::findOrFail($request->room_id);
     $hotelTotalPrice = $room->price_per_night * $request->nights;
+    $perHeadPrice = $room->person_capacity > 0 ? $hotelTotalPrice / $room->person_capacity : $hotelTotalPrice;
 
-    // --- Create Package ---
+    $foodTotal = 0;
+    if ($request->has('foods')) {
+        foreach ($request->foods as $foodData) {
+            $foodTotal += $foodData['total'] ?? 0;
+        }
+    }
+
+    $grandTotal = $hotelTotalPrice + ($request->base_price ?? 0) + ($request->extra_cost ?? 0) + ($request->transport_cost ?? 0) + $foodTotal;
+
+    // Upload the image first if present
+    $imageName = null;
+        if ($request->hasFile('image')) {
+            $imageName = $request->file('image')->store('images', 'public');
+        }
+
+    // dd($imageName);
     $package = Packages::create([
         'title'             => $request->title,
         'destination_id'    => $request->destination_id,
@@ -45,23 +62,17 @@ public function store(Request $request)
         'room_id'           => $request->room_id,
         'nights'            => $request->nights,
         'hotel_total_price' => $hotelTotalPrice,
+        'per_head_price'    => $perHeadPrice,
         'base_price'        => $request->base_price ?? 0,
         'extra_cost'        => $request->extra_cost ?? 0,
         'transport_cost'    => $request->transport_cost ?? 0,
+        'grand_total'       => $grandTotal,
         'start_date'        => $request->start_date,
         'end_date'          => $request->end_date,
+        'image'             => $imageName, // ✅ store image name in DB
     ]);
 
-    // --- Save package image ---
-    if ($request->hasFile('image')) {
-        $filename = time() . '.' . $request->image->extension();
-        $request->image->move(public_path('uploads/packages'), $filename);
-
-        $package->image = $filename;
-        $package->save(); // <-- this line is important!
-    }
-
-    // --- Save selected foods ---
+    // Save selected foods
     if ($request->has('foods')) {
         foreach ($request->foods as $foodId => $foodData) {
             packageFoods::create([
@@ -75,6 +86,7 @@ public function store(Request $request)
 
     return redirect()->back()->with('success', 'Package created successfully!');
 }
+
 
 
 // Update package
