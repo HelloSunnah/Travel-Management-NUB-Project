@@ -759,12 +759,11 @@
                 <p>Explore our most sought-after destinations, from exotic international locales to breathtaking
                     domestic spots.</p>
             </div>
-
             <div class="destinations-grid">
                 @foreach ($packages as $package)
                     <div class="destination-card">
                         <div class="destination-img">
-                            <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+                            <img src="{{ asset('storage/' . $package->image) }}"
                                 alt="Bali">
                         </div>
                         <div class="destination-info">
@@ -777,9 +776,6 @@
                         </div>
                     </div>
                 @endforeach
-
-
-
             </div>
         </div>
     </section>
