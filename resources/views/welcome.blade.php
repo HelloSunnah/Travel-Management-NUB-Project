@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -619,6 +620,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <header>
@@ -648,7 +650,8 @@
         <div class="container">
             <div class="hero-content">
                 <h1>Explore The World With Jatraa</h1>
-                <p>Discover amazing destinations, both international and domestic, with our expert travel management services. Your dream vacation starts here.</p>
+                <p>Discover amazing destinations, both international and domestic, with our expert travel management
+                    services. Your dream vacation starts here.</p>
                 <div class="hero-btns">
                     <a href="#destinations" class="btn">Explore Destinations</a>
                     <a href="#contact" class="btn btn-accent">Contact Us</a>
@@ -691,7 +694,8 @@
         <div class="container">
             <div class="section-title">
                 <h2>Why Choose Jatraa?</h2>
-                <p>We provide comprehensive travel solutions with exceptional service to make your journey memorable and hassle-free.</p>
+                <p>We provide comprehensive travel solutions with exceptional service to make your journey memorable and
+                    hassle-free.</p>
             </div>
 
             <div class="features-grid">
@@ -700,7 +704,8 @@
                         <i class="fas fa-globe"></i>
                     </div>
                     <h3>Global Network</h3>
-                    <p>Access to over 5000 destinations worldwide with our extensive network of partners and affiliates.</p>
+                    <p>Access to over 5000 destinations worldwide with our extensive network of partners and affiliates.
+                    </p>
                 </div>
 
                 <div class="feature-card">
@@ -751,93 +756,30 @@
         <div class="container">
             <div class="section-title">
                 <h2>Popular Destinations</h2>
-                <p>Explore our most sought-after destinations, from exotic international locales to breathtaking domestic spots.</p>
+                <p>Explore our most sought-after destinations, from exotic international locales to breathtaking
+                    domestic spots.</p>
             </div>
 
             <div class="destinations-grid">
-                <div class="destination-card">
-                    <div class="destination-img">
-                        <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Bali">
-                    </div>
-                    <div class="destination-info">
-                        <h3>Bali, Indonesia</h3>
-                        <p>Experience the tropical paradise with stunning beaches, vibrant culture, and lush landscapes.</p>
-                        <div class="destination-meta">
-                            <span><i class="fas fa-plane"></i> Flight Included</span>
-                            <span class="destination-price">$1,299</span>
+                @foreach ($packages as $package)
+                    <div class="destination-card">
+                        <div class="destination-img">
+                            <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+                                alt="Bali">
+                        </div>
+                        <div class="destination-info">
+                            <h3>{{ $package->title }}</h3>
+                            <p>{{ $package->title }}</p>
+                            <div class="destination-meta">
+                                <span><i class="fas fa-plane"></i> {{ $package->destination->name ?? 'N/A' }}</span>
+                                <span class="destination-price">{{ $package->hotel_total_price }}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endforeach
 
-                <div class="destination-card">
-                    <div class="destination-img">
-                        <img src="https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1530&q=80" alt="Paris">
-                    </div>
-                    <div class="destination-info">
-                        <h3>Paris, France</h3>
-                        <p>The city of love and lights, famous for its art, fashion, gastronomy and culture.</p>
-                        <div class="destination-meta">
-                            <span><i class="fas fa-plane"></i> Flight Included</span>
-                            <span class="destination-price">$1,899</span>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="destination-card">
-                    <div class="destination-img">
-                        <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Tokyo">
-                    </div>
-                    <div class="destination-info">
-                        <h3>Tokyo, Japan</h3>
-                        <p>A dynamic metropolis where traditional culture meets cutting-edge technology.</p>
-                        <div class="destination-meta">
-                            <span><i class="fas fa-plane"></i> Flight Included</span>
-                            <span class="destination-price">$2,199</span>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="destination-card">
-                    <div class="destination-img">
-                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="New York">
-                    </div>
-                    <div class="destination-info">
-                        <h3>New York, USA</h3>
-                        <p>The city that never sleeps, offering endless entertainment, culture, and iconic landmarks.</p>
-                        <div class="destination-meta">
-                            <span><i class="fas fa-plane"></i> Flight Included</span>
-                            <span class="destination-price">$1,599</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="destination-card">
-                    <div class="destination-img">
-                        <img src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80" alt="Cape Town">
-                    </div>
-                    <div class="destination-info">
-                        <h3>Cape Town, South Africa</h3>
-                        <p>Breathtaking landscapes, wildlife, and a rich cultural heritage await in this coastal city.</p>
-                        <div class="destination-meta">
-                            <span><i class="fas fa-plane"></i> Flight Included</span>
-                            <span class="destination-price">$1,799</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="destination-card">
-                    <div class="destination-img">
-                        <img src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Sundarbans">
-                    </div>
-                    <div class="destination-info">
-                        <h3>Sundarbans, Bangladesh</h3>
-                        <p>Explore the world's largest mangrove forest and its unique wildlife, including the Royal Bengal Tiger.</p>
-                        <div class="destination-meta">
-                            <span><i class="fas fa-bus"></i> Transport Included</span>
-                            <span class="destination-price">$299</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -853,7 +795,9 @@
             <div class="testimonials-grid">
                 <div class="testimonial-card">
                     <div class="testimonial-content">
-                        <p>Jatraa made our honeymoon to Bali absolutely perfect. Every detail was taken care of, from the flights to the romantic beachfront villa. Their local guide was incredibly knowledgeable and helped us discover hidden gems we would have never found on our own.</p>
+                        <p>Jatraa made our honeymoon to Bali absolutely perfect. Every detail was taken care of, from
+                            the flights to the romantic beachfront villa. Their local guide was incredibly knowledgeable
+                            and helped us discover hidden gems we would have never found on our own.</p>
                     </div>
                     <div class="testimonial-author">
                         <div class="author-img">
@@ -868,7 +812,9 @@
 
                 <div class="testimonial-card">
                     <div class="testimonial-content">
-                        <p>As a frequent business traveler, I rely on Jatraa to handle all my corporate travel needs. Their 24/7 support has saved me multiple times when flights were canceled or changed last minute. The mobile app makes managing itineraries a breeze.</p>
+                        <p>As a frequent business traveler, I rely on Jatraa to handle all my corporate travel needs.
+                            Their 24/7 support has saved me multiple times when flights were canceled or changed last
+                            minute. The mobile app makes managing itineraries a breeze.</p>
                     </div>
                     <div class="testimonial-author">
                         <div class="author-img">
@@ -883,7 +829,9 @@
 
                 <div class="testimonial-card">
                     <div class="testimonial-content">
-                        <p>Our family trip to Japan was unforgettable thanks to Jatraa. They created a perfect itinerary that balanced cultural experiences with fun activities for our kids. The guides were exceptional at engaging our children while teaching us about Japanese traditions.</p>
+                        <p>Our family trip to Japan was unforgettable thanks to Jatraa. They created a perfect itinerary
+                            that balanced cultural experiences with fun activities for our kids. The guides were
+                            exceptional at engaging our children while teaching us about Japanese traditions.</p>
                     </div>
                     <div class="testimonial-author">
                         <div class="author-img">
@@ -903,7 +851,8 @@
     <section class="cta">
         <div class="container">
             <h2>Ready for Your Next Adventure?</h2>
-            <p>Let us handle the details while you focus on making memories. Contact our travel experts today to start planning your dream vacation.</p>
+            <p>Let us handle the details while you focus on making memories. Contact our travel experts today to start
+                planning your dream vacation.</p>
             <a href="#contact" class="btn btn-accent">Get Started Now</a>
         </div>
     </section>
@@ -914,7 +863,9 @@
             <div class="footer-grid">
                 <div class="footer-col">
                     <h3>About Jatraa</h3>
-                    <p>Jatraa is a premier travel management company specializing in both international and domestic travel solutions. We're committed to delivering exceptional service and unforgettable experiences.</p>
+                    <p>Jatraa is a premier travel management company specializing in both international and domestic
+                        travel solutions. We're committed to delivering exceptional service and unforgettable
+                        experiences.</p>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-facebook-f"></i></a>
                         <a href="#"><i class="fab fa-twitter"></i></a>
@@ -969,9 +920,9 @@
 
         mobileMenuBtn.addEventListener('click', () => {
             mainNav.classList.toggle('active');
-            mobileMenuBtn.innerHTML = mainNav.classList.contains('active')
-                ? '<i class="fas fa-times"></i>'
-                : '<i class="fas fa-bars"></i>';
+            mobileMenuBtn.innerHTML = mainNav.classList.contains('active') ?
+                '<i class="fas fa-times"></i>' :
+                '<i class="fas fa-bars"></i>';
         });
 
         // Smooth scrolling for anchor links
@@ -979,17 +930,17 @@
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
 
-                if(this.getAttribute('href') === '#') return;
+                if (this.getAttribute('href') === '#') return;
 
                 const target = document.querySelector(this.getAttribute('href'));
-                if(target) {
+                if (target) {
                     window.scrollTo({
                         top: target.offsetTop - 70,
                         behavior: 'smooth'
                     });
 
                     // Close mobile menu if open
-                    if(mainNav.classList.contains('active')) {
+                    if (mainNav.classList.contains('active')) {
                         mainNav.classList.remove('active');
                         mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
                     }
@@ -1004,5 +955,5 @@
         });
     </script>
 </body>
-</html>
 
+</html>

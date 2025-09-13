@@ -7,15 +7,17 @@ use App\Http\Controllers\PackagesController;
 use App\Http\Controllers\HotelsController;
 use App\Http\Controllers\HotelRoomsController;
 use App\Http\Controllers\FoodsController;
+use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\packageFoodsController;
 use App\Http\Controllers\TransportsController;
 use App\Http\Controllers\PackageTransportController;
 use App\Http\Controllers\OtherCostController;
 use App\Http\Controllers\PackageHotelController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+
+    Route::get('/', [FrontendController::class, 'index']);
+
 
 Route::get('/dashboard', function () {
     return view('AdminPanel.dashboard');
