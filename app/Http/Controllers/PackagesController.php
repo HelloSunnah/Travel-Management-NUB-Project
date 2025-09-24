@@ -93,48 +93,29 @@ public function store(Request $request)
 
     return redirect()->back()->with('success', 'Package created successfully!');
 }
+public function search(Request $request)
+{
+    $query = Packages::query();
 
-    public function search(Request $request)
-    {
-        // Get query parameters
-        $destination = $request->input('destination');
-        $check_in = $request->input('check_in');
-        $check_out = $request->input('check_out');
-        $travelers = $request->input('travelers');
-
-        // Start query builder
-        $query = Package::query();
-
-        // Filter by destination (partial match)
-        if ($destination) {
-            $query->where('destination', 'LIKE', '%' . $destination . '%');
-        }
-
-        // Filter by check-in date
-        if ($check_in) {
-            $query->where('start_date', '>=', $check_in);
-        }
-
-        // Filter by check-out date
-        if ($check_out) {
-            $query->where('end_date', '<=', $check_out);
-        }
-
-        // Filter by travelers
-        if ($travelers) {
-            if ($travelers === '5+') {
-                $query->where('max_travelers', '>=', 5);
-            } else {
-                $query->where('max_travelers', '>=', $travelers);
-            }
-        }
-
-        // Paginate results
-        $packages = $query->orderBy('start_date', 'asc')->paginate(12);
-
-        // Return to the same Blade view with packages
-        return view('welcome', compact('packages'));
+    // Destination filter
+    if ($request->filled('destination_id')) {
+        $query->where('destination_id', $request->destination_id);
     }
+
+    // Date range filter
+    if ($request->filled('start_date') && $request->filled('end_date')) {
+        $query->whereBetween('start_date', [$request->start_date, $request->end_date]);
+    }
+
+    $searchPackages = $query->latest()->paginate(9);
+
+    // For dropdown list
+     $packages = Packages::with('destination', 'hotel', 'room')->paginate(9);
+    $destinations = Destinations::all();
+
+    return view('Frontend', compact('searchPackages', 'destinations','packages'));
+}
+
     // Edit package
 public function edit(Packages $package)
 {

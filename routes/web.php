@@ -18,7 +18,11 @@ use App\Http\Controllers\PackageHotelController;
 
 
 Route::get('/', [FrontendController::class, 'index'])->name('frontend');
+Route::get('/packages/search', [PackagesController::class, 'search'])->name('packages.search');
 
+
+Route::get('/booking/{package}', [BookingsController::class, 'show'])->name('booking.show');
+Route::post('/bookings', [BookingsController::class, 'store'])->name('bookings.store');
 
 Route::get('/dashboard', function () {
     return view('AdminPanel.dashboard');
@@ -49,10 +53,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/destinations/{id}/hotels', [PackagesController::class, 'getHotels']);
     Route::get('/hotels/{id}/rooms', [PackagesController::class, 'getRooms']);
     Route::get('/destinations/{id}/foods', [PackagesController::class, 'getFoods']);
-    Route::get('/packages/search', [PackagesController::class, 'search'])->name('packages.search');
-
 });
-Route::get('/booking/{package}', [BookingsController::class, 'show'])->name('booking.show');
-Route::post('/bookings', [BookingsController::class, 'store'])->name('bookings.store');
 
 require __DIR__ . '/auth.php';
