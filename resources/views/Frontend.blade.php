@@ -15,30 +15,65 @@
                 <!-- Search Form -->
                 <div class="search-form">
                     <div class="form-grid">
-                        <div class="form-group">
-                            <label for="destination">Destination</label>
-                            <input type="text" id="destination" placeholder="Where to?">
-                        </div>
-                        <div class="form-group">
-                            <label for="check-in">Check In</label>
-                            <input type="date" id="check-in">
-                        </div>
-                        <div class="form-group">
-                            <label for="check-out">Check Out</label>
-                            <input type="date" id="check-out">
-                        </div>
-                        <div class="form-group">
-                            <label for="travelers">Travelers</label>
-                            <select id="travelers">
-                                <option value="1">1 Traveler</option>
-                                <option value="2">2 Travelers</option>
-                                <option value="3">3 Travelers</option>
-                                <option value="4">4 Travelers</option>
-                                <option value="5+">5+ Travelers</option>
-                            </select>
-                        </div>
+                        <form method="GET" action="{{ route('packages.search') }}" class="row g-3 mb-4">
+                            <!-- Destination -->
+                            <div class="col-md-4">
+                                <select name="destination_id" class="form-control">
+                                    <option value="">Select Destination</option>
+                                    @foreach ($destinations as $destination)
+                                        <option value="{{ $destination->id }}"
+                                            {{ request('destination_id') == $destination->id ? 'selected' : '' }}>
+                                            {{ $destination->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Start Date -->
+                            <div class="col-md-3">
+                                <input type="date" name="start_date" class="form-control"
+                                    value="{{ request('start_date') }}">
+                            </div>
+
+                            <!-- End Date -->
+                            <div class="col-md-3">
+                                <input type="date" name="end_date" class="form-control"
+                                    value="{{ request('end_date') }}">
+                            </div>
+
+                            <!-- Search Button -->
+                            <div class="col-md-2">
+                                <button class="btn btn-primary w-100">Search</button>
+                            </div>
+                        </form>
                     </div>
-                    <button class="btn search-btn">Search Packages</button>
+                </div>
+                <div class="row mt-4">
+                    @forelse($searchPackages as $package)
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 border-0 shadow-lg rounded-3">
+                                <div class="position-relative">
+                                    <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2">From
+                                        ${{ $package->grand_total }}</span>
+                                </div>
+                                <div class="card-body text-start">
+                                    <h5 class="card-title fw-bold">{{ $package->title }}</h5>
+                                    <p class="mb-1"><i class="bi bi-geo-alt-fill text-danger"></i>
+                                        <strong>Destination:</strong> {{ $package->destination->name ?? 'N/A' }}</p>
+                                    <p class="mb-1"><i class="bi bi-calendar-event text-primary"></i>
+                                        <strong>Dates:</strong> {{ $package->start_date }} - {{ $package->end_date }}</p>
+                                </div>
+                                <div class="card-footer bg-white border-0 text-center pb-3">
+                                    <a href="{{ route('booking.show', $package->id) }}"
+                                        class="btn btn-outline-primary btn-sm fw-bold">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-center text-white fs-5">No packages found for your search.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
