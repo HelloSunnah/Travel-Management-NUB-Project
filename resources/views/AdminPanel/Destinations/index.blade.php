@@ -51,7 +51,7 @@
     <div class="container mt-4">
             <div class="card shadow-lg">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Hotel Management</h4>
+                    <h4 class="mb-0">Destination Management</h4>
         <button class="btn btn-success mb-3" onclick="openCreateModal()">+ Add New Location</button>
 
                 </div>
