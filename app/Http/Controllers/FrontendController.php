@@ -10,6 +10,6 @@ class FrontendController extends Controller
     public function index(){
         $packages = Packages::with('destination', 'hotel', 'room')->paginate(9);
 
-        return view('welcome',compact('packages'));
+        return view('Frontend',compact('packages'));
     }
 }

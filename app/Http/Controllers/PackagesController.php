@@ -21,88 +21,129 @@ class PackagesController extends Controller
 
         return view('AdminPanel.Package.Index', compact('destinations', 'hotels', 'packages'));
     }
+public function store(Request $request)
+{
+    $request->validate([
+        'title'          => 'required|string|max:255',
+        'description'    => 'nullable|string|max:255',
+        'destination_id' => 'required|exists:destinations,id',
+        'hotel_id'       => 'required|exists:hotels,id',
+        'room_id'        => 'required|exists:hotel_rooms,id',
+        'nights'         => 'required|integer|min:1',
+        'start_date'     => 'required|date',
+        'end_date'       => 'required|date|after_or_equal:start_date',
+        // 'image'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-    // Store new package
-    public function store(Request $request)
-    {
-        // dd($request);
-        $request->validate([
-            'title'          => 'required|string|max:255',
-            'description'    => 'nullable|string|max:255',
-            'destination_id' => 'required|exists:destinations,id',
-            'hotel_id'       => 'required|exists:hotels,id',
-            'room_id'        => 'required|exists:hotel_rooms,id',
-            'nights'         => 'required|integer|min:1',
-            'start_date'     => 'required|date',
-            'end_date'       => 'required|date|after_or_equal:start_date',
-            'image'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+    $room = HotelRooms::findOrFail($request->room_id);
 
-        $room = HotelRooms::findOrFail($request->room_id);
-        $hotelTotalPrice = $room->price_per_night * $request->nights;
-        $perHeadPrice = $room->person_capacity > 0 ? $hotelTotalPrice / $room->person_capacity : $hotelTotalPrice;
+    // Calculate per person price for the package
+    $perHeadPrice = $room->price_per_person * $request->nights;
 
-        $foodTotal = 0;
-        if ($request->has('foods')) {
-            foreach ($request->foods as $foodData) {
-                $foodTotal += $foodData['total'] ?? 0;
-            }
+    // Food total
+    $foodTotal = 0;
+    if ($request->has('foods')) {
+        foreach ($request->foods as $foodData) {
+            $foodTotal += $foodData['total'] ?? 0;
         }
-
-        $grandTotal = $hotelTotalPrice 
-                    + ($request->base_price ?? 0) 
-                    + ($request->extra_cost ?? 0) 
-                    + ($request->transport_cost ?? 0) 
-                    + $foodTotal;
-
-        $imageName = null;
-        if ($request->hasFile('image')) {
-            $imageName = $request->file('image')->store('uploads/packages', 'public');
-        }
-
-        // Create package
-        $package = Packages::create([
-            'title'             => $request->title,
-            'description'       => $request->description,
-            'destination_id'    => $request->destination_id,
-            'hotel_id'          => $request->hotel_id,
-            'room_id'           => $request->room_id,
-            'nights'            => $request->nights,
-            'hotel_total_price' => $hotelTotalPrice,
-            'per_head_price'    => $perHeadPrice,
-            'base_price'        => $request->base_price ?? 0,
-            'extra_cost'        => $request->extra_cost ?? 0,
-            'transport_cost'    => $request->transport_cost ?? 0,
-            'grand_total'       => $grandTotal,
-            'start_date'        => $request->start_date,
-            'end_date'          => $request->end_date,
-            'image'             => $imageName,
-        ]);
-
-        // Save selected foods
-        if ($request->has('foods')) {
-            foreach ($request->foods as $foodId => $foodData) {
-                packageFoods::create([
-                    'package_id' => $package->id,
-                    'food_id'    => $foodId,
-                    'quantity'   => $foodData['qty'] ?? 1,
-                    'total'      => $foodData['total'] ?? 0,
-                ]);
-            }
-        }
-
-        return redirect()->back()->with('success', 'Package created successfully!');
     }
 
+    // Grand total for 1 person
+    $grandTotal = $perHeadPrice
+                + ($request->base_price ?? 0)
+                + ($request->extra_cost ?? 0)
+                + ($request->transport_cost ?? 0)
+                + $foodTotal;
+
+    // Handle image upload
+    $imageName = $request->hasFile('image')
+        ? $request->file('image')->store('uploads/packages', 'public')
+        : null;
+
+    // Create package
+    $package = Packages::create([
+        'title'             => $request->title,
+        'description'       => $request->description,
+        'destination_id'    => $request->destination_id,
+        'hotel_id'          => $request->hotel_id,
+        'room_id'           => $request->room_id,
+        'nights'            => $request->nights,
+        'hotel_total_price' => $perHeadPrice, // price for 1 person
+        'per_head_price'    => $perHeadPrice,
+        'base_price'        => $request->base_price ?? 0,
+        'extra_cost'        => $request->extra_cost ?? 0,
+        'transport_cost'    => $request->transport_cost ?? 0,
+        'grand_total'       => $grandTotal,
+        'start_date'        => $request->start_date,
+        'end_date'          => $request->end_date,
+        'image'             => $imageName,
+    ]);
+
+    // Save selected foods
+    if ($request->has('foods')) {
+        foreach ($request->foods as $foodId => $foodData) {
+            packageFoods::create([
+                'package_id' => $package->id,
+                'food_id'    => $foodId,
+                'quantity'   => $foodData['qty'] ?? 1,
+                'total'      => $foodData['total'] ?? 0,
+            ]);
+        }
+    }
+
+    return redirect()->back()->with('success', 'Package created successfully!');
+}
+
+    public function search(Request $request)
+    {
+        // Get query parameters
+        $destination = $request->input('destination');
+        $check_in = $request->input('check_in');
+        $check_out = $request->input('check_out');
+        $travelers = $request->input('travelers');
+
+        // Start query builder
+        $query = Package::query();
+
+        // Filter by destination (partial match)
+        if ($destination) {
+            $query->where('destination', 'LIKE', '%' . $destination . '%');
+        }
+
+        // Filter by check-in date
+        if ($check_in) {
+            $query->where('start_date', '>=', $check_in);
+        }
+
+        // Filter by check-out date
+        if ($check_out) {
+            $query->where('end_date', '<=', $check_out);
+        }
+
+        // Filter by travelers
+        if ($travelers) {
+            if ($travelers === '5+') {
+                $query->where('max_travelers', '>=', 5);
+            } else {
+                $query->where('max_travelers', '>=', $travelers);
+            }
+        }
+
+        // Paginate results
+        $packages = $query->orderBy('start_date', 'asc')->paginate(12);
+
+        // Return to the same Blade view with packages
+        return view('welcome', compact('packages'));
+    }
     // Edit package
-    public function edit(Packages $package)
-    {
-        $destinations = Destinations::all();
-        $hotels = Hotels::all();
-        $rooms = HotelRooms::where('hotel_id', $package->hotel_id)->get();
-
-        return view('AdminPanel.Package.Index', compact('package', 'destinations', 'hotels', 'rooms'));
-    }
+public function edit(Packages $package)
+{
+    $destinations = Destinations::all();
+    $hotels = Hotels::all();
+    $rooms = $package->hotel ? $package->hotel->rooms : collect();
+    $foods = $package->destination ? $package->destination->foods : collect();
+    return view('AdminPanel.Package.Edit', compact('package', 'destinations', 'hotels', 'rooms', 'foods'));
+}
 
     // Update package
     public function update(Request $request, Packages $package)
@@ -130,10 +171,10 @@ class PackagesController extends Controller
             }
         }
 
-        $grandTotal = $hotelTotalPrice 
-                    + ($request->base_price ?? 0) 
-                    + ($request->extra_cost ?? 0) 
-                    + ($request->transport_cost ?? 0) 
+        $grandTotal = $hotelTotalPrice
+                    + ($request->base_price ?? 0)
+                    + ($request->extra_cost ?? 0)
+                    + ($request->transport_cost ?? 0)
                     + $foodTotal;
 
         // Update base fields

@@ -85,12 +85,12 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="bookings/confirmed.html">
+                                <a href="{{ route('admin.bookings.approved') }}">
                                     <span class="sub-item">Confirmed Bookings</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="bookings/cancelled.html">
+                                <a href="{{ route('admin.bookings.cancelled') }}">
                                     <span class="sub-item">Cancelled Bookings</span>
                                 </a>
                             </li>

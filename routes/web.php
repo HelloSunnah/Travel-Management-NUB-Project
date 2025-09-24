@@ -17,7 +17,7 @@ use App\Http\Controllers\PackageHotelController;
 
 
 
-    Route::get('/', [FrontendController::class, 'index']);
+Route::get('/', [FrontendController::class, 'index'])->name('frontend');
 
 
 Route::get('/dashboard', function () {
@@ -40,16 +40,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('transports', TransportsController::class);
     Route::resource('package-transports', PackageTransportController::class);
     Route::resource('other-costs', OtherCostController::class);
-        Route::get('/bookings', [BookingsController::class, 'adminIndex'])->name('admin.bookings.index');
+    Route::get('/bookings', [BookingsController::class, 'adminIndex'])->name('admin.bookings.index');
+    Route::get('/bookings/approve', [BookingsController::class, 'adminIndexApproved'])->name('admin.bookings.approved');
+    Route::get('/bookings/cancel', [BookingsController::class, 'adminIndexCancelled'])->name('admin.bookings.cancelled');
     Route::post('/bookings/{booking}/approve', [BookingsController::class, 'approve'])->name('admin.bookings.approve');
     Route::post('/bookings/{booking}/cancel', [BookingsController::class, 'cancel'])->name('admin.bookings.cancel');
-
-// Ajax
-
-Route::get('/destinations/{id}/hotels', [PackagesController::class, 'getHotels']);
-Route::get('/hotels/{id}/rooms', [PackagesController::class, 'getRooms']);
-Route::get('/destinations/{id}/foods', [PackagesController::class, 'getFoods']);
-
+    // Ajax
+    Route::get('/destinations/{id}/hotels', [PackagesController::class, 'getHotels']);
+    Route::get('/hotels/{id}/rooms', [PackagesController::class, 'getRooms']);
+    Route::get('/destinations/{id}/foods', [PackagesController::class, 'getFoods']);
+    Route::get('/packages/search', [PackagesController::class, 'search'])->name('packages.search');
 
 });
 Route::get('/booking/{package}', [BookingsController::class, 'show'])->name('booking.show');
