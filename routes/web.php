@@ -2,24 +2,21 @@
 
 use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\DestinationsController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PackagesController;
-use App\Http\Controllers\HotelsController;
-use App\Http\Controllers\HotelRoomsController;
 use App\Http\Controllers\FoodsController;
 use App\Http\Controllers\FrontendController;
-use App\Http\Controllers\packageFoodsController;
-use App\Http\Controllers\TransportsController;
-use App\Http\Controllers\PackageTransportController;
+use App\Http\Controllers\HotelRoomsController;
+use App\Http\Controllers\HotelsController;
 use App\Http\Controllers\OtherCostController;
+use App\Http\Controllers\packageFoodsController;
 use App\Http\Controllers\PackageHotelController;
-
-
+use App\Http\Controllers\PackagesController;
+use App\Http\Controllers\PackageTransportController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TransportsController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontendController::class, 'index'])->name('frontend');
 Route::get('/packages/search', [PackagesController::class, 'search'])->name('packages.search');
-
 
 Route::get('/booking/{package}', [BookingsController::class, 'show'])->name('booking.show');
 Route::post('/bookings', [BookingsController::class, 'store'])->name('bookings.store');
@@ -50,9 +47,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/bookings/{booking}/approve', [BookingsController::class, 'approve'])->name('admin.bookings.approve');
     Route::post('/bookings/{booking}/cancel', [BookingsController::class, 'cancel'])->name('admin.bookings.cancel');
     // Ajax
-    Route::get('/destinations/{id}/hotels', [PackagesController::class, 'getHotels']);
     Route::get('/hotels/{id}/rooms', [PackagesController::class, 'getRooms']);
-    Route::get('/destinations/{id}/foods', [PackagesController::class, 'getFoods']);
+    Route::get('/destinations/{id}/hotels', [PackagesController::class, 'getHotelsByDestination']);
+    Route::get('/destinations/{id}/foods', [PackagesController::class, 'getFoodsByDestination']);
+
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
