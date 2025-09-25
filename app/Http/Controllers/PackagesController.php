@@ -13,16 +13,22 @@ use Illuminate\Http\Request;
 class PackagesController extends Controller
 {
     // Show packages + form
-    public function index()
-    {
-        $packages = Packages::with(['destination', 'hotel', 'room', 'foods'])->latest()->get();
-        $destinations = Destinations::all();
-        $hotels = Hotels::all();
+// Show all packages
+public function index()
+{
+    $packages = Packages::with(['destination', 'hotel', 'room', 'foods'])->latest()->get();
+    return view('AdminPanel.Package.Index', compact('packages'));
+}
 
-        return view('AdminPanel.Package.Index', compact('destinations', 'hotels', 'packages'));
-    }
+public function create()
+{
+    $destinations = Destinations::all();
+    $hotels = Hotels::all();
+    return view('AdminPanel.Package.create', compact('destinations', 'hotels'));
+}
 public function store(Request $request)
 {
+    //dd($request);
     $request->validate([
         'title'          => 'required|string|max:255',
         'description'    => 'nullable|string|max:255',
@@ -32,7 +38,6 @@ public function store(Request $request)
         'nights'         => 'required|integer|min:1',
         'start_date'     => 'required|date',
         'end_date'       => 'required|date|after_or_equal:start_date',
-        // 'image'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
     ]);
 
     $room = HotelRooms::findOrFail($request->room_id);
@@ -91,7 +96,8 @@ public function store(Request $request)
         }
     }
 
-    return redirect()->back()->with('success', 'Package created successfully!');
+return redirect()->route('packages.index')
+                 ->with('success', 'Package created successfully!');
 }
 public function search(Request $request)
 {
@@ -123,9 +129,9 @@ public function edit(Packages $package)
     $hotels = Hotels::all();
     $rooms = $package->hotel ? $package->hotel->rooms : collect();
     $foods = $package->destination ? $package->destination->foods : collect();
+
     return view('AdminPanel.Package.Edit', compact('package', 'destinations', 'hotels', 'rooms', 'foods'));
 }
-
     // Update package
     public function update(Request $request, Packages $package)
     {
@@ -236,4 +242,15 @@ public function edit(Packages $package)
         $foods = Foods::where('destination_id', $destinationId)->get();
         return response()->json($foods);
     }
+    public function getHotelsByDestination($destinationId)
+{
+    $hotels = Hotels::where('destination_id', $destinationId)->get();
+    return response()->json($hotels);
+}
+
+public function getFoodsByDestination($destinationId)
+{
+    $foods = Foods::where('destination_id', $destinationId)->get();
+    return response()->json($foods);
+}
 }
